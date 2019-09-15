@@ -1,6 +1,7 @@
 package fr.az.fatalstrike.ui.screen;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Point2D;
@@ -14,11 +15,12 @@ import de.gurkenlabs.litiengine.Align;
 import de.gurkenlabs.litiengine.Direction;
 import de.gurkenlabs.litiengine.Game;
 import de.gurkenlabs.litiengine.Valign;
+import de.gurkenlabs.litiengine.environment.tilemap.IMap;
 import de.gurkenlabs.litiengine.gui.GuiComponent;
 import de.gurkenlabs.litiengine.gui.ImageComponent;
 import de.gurkenlabs.litiengine.gui.screens.GameScreen;
 import de.gurkenlabs.litiengine.resources.Resources;
-
+import fr.az.fatalstrike.FatalStrike;
 import fr.az.fatalstrike.FatalStrike.MAPS;
 import fr.az.fatalstrike.game.Action;
 import fr.az.fatalstrike.ui.SlideMenu;
@@ -48,14 +50,20 @@ public final class IngameScreen extends GameScreen
 	{
 		super.prepare();
 		Game.world().loadEnvironment(MAPS.FIGHT);
+		IMap map = Game.world().environment().getMap();
 		
-		Point2D focus = Game.world().environment().getCenter();		
-		float width = Game.world().environment().getMap().getWidth() * Game.world().environment().getMap().getTileWidth();
-
-		focus.setLocation(focus.getX() - 20 + width / Game.graphics().getBaseRenderScale(), focus.getY());
+		Dimension screen = FatalStrike.getEffectiveWindowSize();
+		Point2D focus = Game.world().environment().getCenter();
+		
+		float width = map.getWidth() * map.getTileWidth() * Game.graphics().getBaseRenderScale();
+		float height = map.getHeight() * map.getTileHeight() * Game.graphics().getBaseRenderScale();
+		double offset = (screen.getHeight() - height) / 2;
+		
+		focus.setLocation(focus.getX() - offset, focus.getY());
 		Game.world().camera().setFocus(focus);
 		
-		this.actionBar.setDimension(400, this.getHeight() -200);
+		this.actionBar.setDimension(width, height);
+		this.actionBar.setLocation(offset, offset);
 	}
 	
 	public ActionBar getActionBar() { return this.actionBar; }
@@ -98,7 +106,6 @@ public final class IngameScreen extends GameScreen
 			this.buttonValidation = new ImageComponent(0, 0, BUTTON_VALIDATION);
 			this.buttonValidation.setImageAlign(Align.CENTER);
 			this.buttonValidation.setImageValign(Valign.MIDDLE);
-			this.buttonValidation.getAppearance().setTransparentBackground(true);
 			this.getComponents().add(this.buttonValidation);
 		}
 		

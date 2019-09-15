@@ -1,7 +1,11 @@
 package fr.az.fatalstrike;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.HeadlessException;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
@@ -34,6 +38,20 @@ public final class FatalStrike
 	public static JFrame window() { return window; }
 	public static GameManager manager() { return manager; }
 	public static GameField field() { return field; }
+	
+	public static Dimension getEffectiveWindowSize()
+	{
+		Dimension window = FatalStrike.window.getSize();
+		
+		try
+		{
+			Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(FatalStrike.window.getGraphicsConfiguration());
+			window.setSize(window.width - insets.left - insets.right, window.width - insets.top - insets.bottom);
+		} catch (HeadlessException e) {}
+		
+		System.out.println(window);
+		return window;
+	}
 	
 	private FatalStrike() {}
 	

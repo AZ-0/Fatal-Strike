@@ -27,7 +27,8 @@ public class SlideMenu<T> extends GuiComponent
 	private static final BufferedImage ARROW_LEFT = Resources.images().get("ui/arrow_left.png");
 	private static final BufferedImage ARROW_RIGHT = Resources.images().get("ui/arrow_right.png");
 	private static final int SLIDE_DELAY = 200;
-	private static final int DEFAULT_SIZE = 112;
+	private static final int DEFAULT_SIZE = 128;
+	private static final int MIN_SIZE = 2;
 
 	private int focus = 0;
 	private long lastSlide = 0;
@@ -64,12 +65,12 @@ public class SlideMenu<T> extends GuiComponent
 		this.itemHeight = itemHeight;
 		
 		for (T item : items) this.addItem(item, iconProvider.apply(item));
-		if (items.length > 0) selected = items[0];
+		if (items.length != 0) selected = items[0];
 	}
 	
 	{
-		this.setItemHeight(itemHeight);
-		this.setItemWidth(itemWidth);
+		this.setItemHeight(this.itemHeight);
+		this.setItemWidth(this.itemWidth);
 	}
 	
 	@Override
@@ -127,7 +128,6 @@ public class SlideMenu<T> extends GuiComponent
 			int bWidth = this.getButtonWidth();
 		
 			this.render(bWidth, items, rendered, i -> i >= this.focus && i < this.focus + this.maxRenderAmount);
-			
 			if (this.focus + this.maxRenderAmount > this.items.size())
 				render(bWidth, items, rendered, i ->
 				i < ((focus + maxRenderAmount) % items.size()) + maxRenderAmount - (maxRenderAmount % items.size()));
@@ -146,7 +146,7 @@ public class SlideMenu<T> extends GuiComponent
 		}
 		
 		if (this.mousePressingButtonLeft && SLIDE_DELAY < Game.time().since(this.lastSlide)) this.slide(-1);
-		if (this.mousePressingButtonRight && SLIDE_DELAY < Game.time().since(this.lastSlide)) this.slide(1);
+		else if (this.mousePressingButtonRight && SLIDE_DELAY < Game.time().since(this.lastSlide)) this.slide(1);
 		
 		super.render(g);
 	}
@@ -213,40 +213,45 @@ public class SlideMenu<T> extends GuiComponent
 	@Override public void setY(double y) { super.setY(y); this.renderChanged = true; }
 	
 	@Override public void setDimension(double width, double height) { this.setHeight(height); this.setWidth(width); }
-	@Override public void setHeight(double height) { this.setItemHeight((int) height); super.setHeight(height); }
+	@Override public void setHeight(double height)
+	{
+		if (height < MIN_SIZE) height = MIN_SIZE;
+		super.setHeight(height);
+		this.itemHeight = (int) height;
+	}
 	
 	@Override
 	public void setWidth(double width)
 	{
 		int bWidth = this.getButtonWidth();
-		int renderAmount = Math.min(items == null ? maxRenderAmount : items.size(), maxRenderAmount);
+		int renderAmount = Math.min(this.items == null ? this.maxRenderAmount : this.items.size(), this.maxRenderAmount);
 		
 		if (width < bWidth * (renderAmount + 2)) width =  bWidth * (renderAmount + 2);
 		super.setWidth(width);
 		
-		this.internalSetItemWidth(renderAmount < 1 ? 0 : (int) ((width - bWidth * 2) / renderAmount));
+		this.internalSetItemWidth(renderAmount < 1 ? MIN_SIZE : (int) ((width - bWidth * 2) / renderAmount));
 	}
 	
-	public void setMaxItemRenderingAmount(int amount) { this.maxRenderAmount = amount; }
 	public void setItemDimension(int width, int height) { this.setItemWidth(width); this.setItemHeight(height); }
+	public void setItemHeight(int height) { this.setHeight(height); }
 	public void setItemWidth(int width)
 	{
 		int bWidth = this.getButtonWidth();
-		int renderAmount = Math.min(items == null ? maxRenderAmount : items.size(), maxRenderAmount);
+		int renderAmount = Math.min(this.items == null ? this.maxRenderAmount : this.items.size(), this.maxRenderAmount);
 		if (width < bWidth) width = bWidth;
 		
 		super.setWidth(width * renderAmount + 2 * bWidth);
 		this.internalSetItemWidth(width);
 	}
 	
-	public void setItemHeight(int height)
+	protected void internalSetItemWidth(int width)
 	{
-		super.setHeight(height);
-		this.itemHeight = height;
+		if(width < MIN_SIZE) width = MIN_SIZE;
+		this.itemWidth = width;
 		this.renderChanged = true;
 	}
 	
-	protected void internalSetItemWidth(int width) { this.itemWidth = width; this.renderChanged = true; }
+	public void setMaxItemRenderingAmount(int amount) { this.maxRenderAmount = amount < 0 ? 0 : amount; }
 	
 	public boolean hasRenderChanged() { return this.renderChanged; }
 	
