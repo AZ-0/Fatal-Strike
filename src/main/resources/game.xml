@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gameinfo>
+	<title>Fatal Strike</title>
+	<name>Fatal Strike</name>
+	<website>https://github.com/A~Z/Fatal Strike</website>
+	<subTitle>Made with LITIengine!</subTitle>
+	<description>A game, that was implemented with the LITIengine.</description>
+	<version>v0.1</version>
+	<developer>Justin Carel [A~Z] [AZ-0]</developer>
+</gameinfo>
