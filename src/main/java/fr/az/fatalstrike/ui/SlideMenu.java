@@ -20,16 +20,17 @@ import de.gurkenlabs.litiengine.Valign;
 import de.gurkenlabs.litiengine.gui.GuiComponent;
 import de.gurkenlabs.litiengine.gui.ImageComponent;
 import de.gurkenlabs.litiengine.gui.ImageScaleMode;
-import de.gurkenlabs.litiengine.resources.Resources;
 
 public class SlideMenu<T> extends GuiComponent
 {
-	private static final BufferedImage ARROW_LEFT = Resources.images().get("ui/arrow_left.png");
-	private static final BufferedImage ARROW_RIGHT = Resources.images().get("ui/arrow_right.png");
 	private static final int SLIDE_DELAY = 200;
+	private static final int DEFAULT_MAX_RENDER_AMOUNT = 3;
 	private static final int DEFAULT_SIZE = 128;
 	private static final int MIN_SIZE = 2;
 
+	public static BufferedImage ARROW_LEFT;
+	public static BufferedImage ARROW_RIGHT;
+	
 	private int focus = 0;
 	private long lastSlide = 0;
 	private boolean mousePressingButtonLeft = false;
@@ -37,49 +38,55 @@ public class SlideMenu<T> extends GuiComponent
 	private boolean renderChanged = true;
 	private Set<Consumer<SlideMenu<T>>> onRenderChanged = new HashSet<>();
 	
+	private final BufferedImage arrowLeft;
+	private final BufferedImage arrowRight;
 	protected ImageComponent buttonLeft;
 	protected ImageComponent buttonRight;
 
-	protected int maxRenderAmount = 3;
+	protected int maxRenderAmount = DEFAULT_MAX_RENDER_AMOUNT;
 	protected int itemHeight;
 	protected int itemWidth;
 	
-	protected HashMap<T, ImageComponent> items;
+	protected final HashMap<T, ImageComponent> items;
 	protected T selected;
 
 	public SlideMenu(double x, double y) {
-		this(x, y, DEFAULT_SIZE * 5, DEFAULT_SIZE, DEFAULT_SIZE, DEFAULT_SIZE); }
-	
-	public SlideMenu(double x, double y, double width, double height, int itemWidth, int itemHeight) {
-		this(x, y, width, height, itemWidth, itemHeight, null); }
+		this(x, y, DEFAULT_SIZE, DEFAULT_SIZE); }
 
+	public SlideMenu(double x, double y, int itemWidth, int itemHeight) {
+		this(x, y, itemWidth, itemHeight, null); }
+
+	public SlideMenu(double x, double y, double width, double height) {
+		this(x, y, width, height, null); }
+	
 	@SafeVarargs
 	public SlideMenu(double x, double y, double width, double height, Function<T,Image> iconProvider, T... items) {
-		this(x, y, width, height, DEFAULT_SIZE, DEFAULT_SIZE, iconProvider, items); }
-
+		this(x, y, (int) width / 5, (int) height, iconProvider, items); }
+	
 	@SafeVarargs
-	public SlideMenu(double x, double y, double width, double height, int itemWidth, int itemHeight, Function<T,Image> iconProvider, T... items)
+	public SlideMenu(double x, double y, int itemWidth, int itemHeight, Function<T,Image> iconProvider, T... items)
 	{
-		super(x, y, width, height);
+		super(x, y, itemWidth * DEFAULT_MAX_RENDER_AMOUNT, itemHeight);
+		this.items = new HashMap<>();
+		this.arrowLeft = ARROW_LEFT;
+		this.arrowRight = ARROW_RIGHT;
+
 		this.itemWidth = itemWidth;
 		this.itemHeight = itemHeight;
 		
 		for (T item : items) this.addItem(item, iconProvider.apply(item));
 		if (items.length != 0) selected = items[0];
-	}
-	
-	{
-		this.setItemHeight(this.itemHeight);
-		this.setItemWidth(this.itemWidth);
+		
+		this.buttonLeft.setImage(this.arrowLeft);
+		this.buttonRight.setImage(this.arrowRight);
+		this.buttonLeft.setDimension(this.arrowLeft.getWidth(), this.arrowRight.getHeight());
+		this.buttonRight.setDimension(this.arrowRight.getWidth(), this.arrowRight.getHeight());
 	}
 	
 	@Override
-	protected void initializeComponents()
+	public void initializeComponents()
 	{
-		this.items = new HashMap<>();
-		super.initializeComponents();
-		
-		this.buttonLeft = new ImageComponent(0, 0, ARROW_LEFT.getWidth(), ARROW_LEFT.getHeight(), ARROW_LEFT);
+		this.buttonLeft = new ImageComponent(0, 0, 0, 0);
 		this.buttonLeft.onMouseLeave(e -> this.mousePressingButtonLeft = false);
 		this.buttonLeft.onMouseReleased(e -> this.mousePressingButtonLeft = false);
 		this.buttonLeft.onMousePressed(e ->
@@ -87,8 +94,8 @@ public class SlideMenu<T> extends GuiComponent
 			this.slide(-1);
 			this.mousePressingButtonLeft = true;
 		});
-		
-		this.buttonRight = new ImageComponent(0, 0, ARROW_RIGHT.getWidth(), ARROW_RIGHT.getHeight(), ARROW_RIGHT);
+
+		this.buttonRight = new ImageComponent(0, 0, 0, 0);
 		this.buttonRight.onMouseLeave(e -> this.mousePressingButtonRight = false);
 		this.buttonRight.onMouseReleased(e -> this.mousePressingButtonRight = false);
 		this.buttonRight.onMousePressed(e ->
@@ -134,14 +141,15 @@ public class SlideMenu<T> extends GuiComponent
 
 			this.buttonLeft.setWidth(bWidth);
 			this.buttonLeft.setHeight(bWidth);
-			this.buttonLeft.setImage(ARROW_LEFT.getScaledInstance(bWidth, bWidth, Image.SCALE_SMOOTH));
+			this.buttonLeft.setImage(arrowLeft.getScaledInstance(bWidth, bWidth, Image.SCALE_SMOOTH));
 			this.buttonLeft.setLocation(this.getX(), this.getY() + (this.itemHeight / 2f) - (bWidth / 2f));
 		
 			this.buttonRight.setWidth(bWidth);
 			this.buttonRight.setHeight(bWidth);
-			this.buttonRight.setImage(ARROW_RIGHT.getScaledInstance(bWidth, bWidth, Image.SCALE_SMOOTH));
+			this.buttonRight.setImage(arrowRight.getScaledInstance(bWidth, bWidth, Image.SCALE_SMOOTH));
 			this.buttonRight.setLocation(bWidth + this.getX() + rendered.size() * this.itemWidth, this.getY() + (this.itemHeight / 2f) - (bWidth / 2f));
 			
+			this.renderChanged = false;
 			this.onRenderChanged.forEach(c -> c.accept(this));
 		}
 		
@@ -206,6 +214,8 @@ public class SlideMenu<T> extends GuiComponent
 		this.getComponents().add(img);
 		this.setWidth(this.getWidth());
 	}
+	
+	public void onRenderChanged(Consumer<SlideMenu<T>> action) { this.onRenderChanged.add(action); }
 	
 	@Override public void setLocation(Point2D location) { super.setLocation(location); this.renderChanged = true; }
 	@Override public void setLocation(double x, double y) { super.setLocation(x, y); this.renderChanged = true; }

@@ -46,7 +46,7 @@ public final class FatalStrike
 		try
 		{
 			Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(FatalStrike.window.getGraphicsConfiguration());
-			window.setSize(window.width - insets.left - insets.right, window.width - insets.top - insets.bottom);
+			window.setSize(window.width - insets.left - insets.right, window.height - insets.top - insets.bottom);
 		} catch (HeadlessException e) {}
 		
 		System.out.println(window);
@@ -128,6 +128,14 @@ public final class FatalStrike
 	{
 		private PATHS() {}
 		public static final String FONTS = "fonts" + File.separatorChar;
+		public static final String GUI = "ui" + File.separatorChar;
 		public static final String SPRITES = "sprites" + File.separatorChar;
+	}
+	
+	public static final class IMAGES
+	{
+		private IMAGES() {}
+		public static final BufferedImage UI_ARROW_LEFT = Resources.images().get(PATHS.GUI + "arrow_left.png");
+		public static final BufferedImage UI_ARROW_RIGHT = Resources.images().get(PATHS.GUI + "arrow_right.png");
 	}
 }

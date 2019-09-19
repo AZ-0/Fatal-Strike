@@ -1,6 +1,5 @@
 package fr.az.fatalstrike.ui.screen;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -21,6 +20,7 @@ import de.gurkenlabs.litiengine.gui.ImageComponent;
 import de.gurkenlabs.litiengine.gui.screens.GameScreen;
 import de.gurkenlabs.litiengine.resources.Resources;
 import fr.az.fatalstrike.FatalStrike;
+import fr.az.fatalstrike.FatalStrike.IMAGES;
 import fr.az.fatalstrike.FatalStrike.MAPS;
 import fr.az.fatalstrike.game.Action;
 import fr.az.fatalstrike.ui.SlideMenu;
@@ -49,21 +49,27 @@ public final class IngameScreen extends GameScreen
 	public void prepare()
 	{
 		super.prepare();
+		Game.world().camera().setClampToMap(false);
 		Game.world().loadEnvironment(MAPS.FIGHT);
+		
 		IMap map = Game.world().environment().getMap();
-		
-		Dimension screen = FatalStrike.getEffectiveWindowSize();
 		Point2D focus = Game.world().environment().getCenter();
+		Dimension screen = FatalStrike.getEffectiveWindowSize();
 		
-		float width = map.getWidth() * map.getTileWidth() * Game.graphics().getBaseRenderScale();
-		float height = map.getHeight() * map.getTileHeight() * Game.graphics().getBaseRenderScale();
-		double offset = (screen.getHeight() - height) / 2;
+		//Display Computations
+		float mapWidth = map.getWidth() * map.getTileWidth() * Game.graphics().getBaseRenderScale();
+		float mapHeight = map.getHeight() * map.getTileHeight() * Game.graphics().getBaseRenderScale();
 		
-		focus.setLocation(focus.getX() - offset, focus.getY());
+		float offset = (screen.height - mapHeight) / 2;
+		float actionBarX = mapWidth + 2*offset -1;
+		
+		//Map Display
+		focus.setLocation((screen.width/2f - offset) / Game.graphics().getBaseRenderScale(), focus.getY());
 		Game.world().camera().setFocus(focus);
 		
-		this.actionBar.setDimension(width, height);
-		this.actionBar.setLocation(offset, offset);
+		//Action Bar Display
+		this.actionBar.setLocation(actionBarX, offset +1);
+		this.actionBar.setDimension(screen.width - actionBarX - offset, mapHeight);
 	}
 	
 	public ActionBar getActionBar() { return this.actionBar; }
@@ -86,14 +92,22 @@ public final class IngameScreen extends GameScreen
 		protected ActionBar(double x, double y, double width, double height) { super(x, y, width, height); }
 		
 		{
+			IMAGES.UI_ARROW_LEFT.getHeight();
+			SlideMenu.ARROW_LEFT = IMAGES.UI_ARROW_LEFT;
+			SlideMenu.ARROW_RIGHT = IMAGES.UI_ARROW_RIGHT;
+			
 			for (int i = 0; i < 3; i++)
 			{
 				Tuple2<SlideMenu<Action>, SlideMenu<Direction>> tuple = new Tuple2<>(
 						new SlideMenu<>(0, 0, this.getWidth(), this.getHeight() / 7, null),
 						new SlideMenu<>(0, 0, this.getWidth(), this.getHeight() / 7, null));
 				
+				tuple.a.onRenderChanged(SlideMenu::adjustWidthToHeight);
+				tuple.b.onRenderChanged(SlideMenu::adjustWidthToHeight);
+				
 				this.getComponents().add(tuple.a);
 				this.getComponents().add(tuple.b);
+				
 				this.slides.add(tuple);
 			}
 		}
@@ -150,19 +164,6 @@ public final class IngameScreen extends GameScreen
 				this.buttonValidation.setLocation(this.getX() + demiwidth - this.buttonValidation.getWidth() / 2, y);
 			}
 			
-			g.setColor(Color.RED);
-			g.drawRect((int) this.getX(), (int) this.getY(), (int) this.getWidth(), (int) this.getHeight());
-			
-			g.drawRect((int) buttonValidation.getX(), (int) buttonValidation.getY(), (int) buttonValidation.getWidth(), (int) buttonValidation.getHeight());
-			
-			g.setColor(Color.BLUE);
-			for (Tuple2<SlideMenu<Action>, SlideMenu<Direction>> tuple : this.slides)
-			{
-				g.drawRect((int) tuple.a.getX(), (int) tuple.a.getY(), (int) tuple.a.getWidth(), (int) tuple.a.getHeight());
-				g.drawRect((int) tuple.b.getX(), (int) tuple.b.getY(), (int) tuple.b.getWidth(), (int) tuple.b.getHeight());
-			}
-			
-			this.slides.forEach(tuple -> tuple.toList((SlideMenu<?>) null).stream().filter(SlideMenu::hasRenderChanged).forEach(SlideMenu::adjustWidthToHeight));
 			super.render(g);
 		}
 		
