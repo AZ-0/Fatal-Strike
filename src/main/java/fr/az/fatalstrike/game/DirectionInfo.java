@@ -13,11 +13,9 @@ public class DirectionInfo
 	public final static BufferedImage IMG_RIGHT = Resources.images().get(PATHS.GUI + "dir/right.png");
 	public final static BufferedImage IMG_UP = Resources.images().get(PATHS.GUI + "dir/up.png");
 	
-	protected Direction direction = Direction.UNDEFINED;
-	
-	public BufferedImage provideImage()
+	public static BufferedImage provideImage(Direction direction)
 	{
-		switch(this.direction)
+		switch(direction)
 		{
 			case DOWN: return IMG_DOWN;
 			case LEFT: return IMG_LEFT;
@@ -26,6 +24,13 @@ public class DirectionInfo
 			default: return null;
 		}
 	}
+	
+	protected Direction direction = Direction.UNDEFINED;
+	
+	public DirectionInfo() {}
+	public DirectionInfo(Direction direction) { this.direction = direction; }
+	
+	public BufferedImage provideImage() { return provideImage(this.getDirection()); }
 	
 	public void setDirection(Direction direction) { this.direction = direction; }
 	public Direction getDirection() { return this.direction; }

@@ -8,7 +8,10 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import de.gurkenlabs.litiengine.Align;
 import de.gurkenlabs.litiengine.Direction;
@@ -23,6 +26,7 @@ import fr.az.fatalstrike.FatalStrike;
 import fr.az.fatalstrike.FatalStrike.IMAGES;
 import fr.az.fatalstrike.FatalStrike.MAPS;
 import fr.az.fatalstrike.game.Action;
+import fr.az.fatalstrike.game.Player;
 import fr.az.fatalstrike.ui.SlideMenu;
 import fr.az.fatalstrike.util.Tuple2;
 
@@ -34,6 +38,9 @@ public final class IngameScreen extends GameScreen
 	public static IngameScreen screen() { return screen; }
 	
 	private ActionBar actionBar;
+	private Set<Consumer<IngameScreen>> onPlayerValidated = new HashSet<>();
+	
+	private int player = 0;
 	
 	private IngameScreen() { super(NAME); }
 	
@@ -41,7 +48,20 @@ public final class IngameScreen extends GameScreen
 	protected void initializeComponents()
 	{
 		super.initializeComponents();
+		
 		this.actionBar = new ActionBar(0, 0);
+		this.actionBar.buttonValidation.onClicked(e ->
+		{
+			Game.window().getRenderComponent().fadeOut(200);
+			this.onPlayerValidated.forEach(c -> c.accept(this));
+			
+			Game.loop().perform(200, () ->
+			{
+				Player p = FatalStrike.manager().players().get(this.player++);
+				this.actionBar.getActions().forEach(SlideMenu::clearItems);
+				this.actionBar.getActions().forEach(s -> s.addItems(Action::getIcon, p.getCharacter().getActions()));
+			});
+		});
 		this.getComponents().add(actionBar);
 	}
 	
@@ -72,6 +92,7 @@ public final class IngameScreen extends GameScreen
 		this.actionBar.setDimension(screen.width - actionBarX - offset, mapHeight);
 	}
 	
+	public void onPlayerValidated(Consumer<IngameScreen> action) { this.onPlayerValidated.add(action); }
 	public ActionBar getActionBar() { return this.actionBar; }
 	
 	

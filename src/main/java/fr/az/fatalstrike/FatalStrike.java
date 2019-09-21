@@ -8,13 +8,17 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.JFrame;
 
+import de.gurkenlabs.litiengine.Direction;
 import de.gurkenlabs.litiengine.Game;
 import de.gurkenlabs.litiengine.resources.Resources;
-import fr.az.fatalstrike.game.Action;
+import fr.az.fatalstrike.game.DirectionInfo;
+import fr.az.fatalstrike.game.Player;
 import fr.az.fatalstrike.game.field.GameField;
 import fr.az.fatalstrike.ui.screen.IngameScreen;
 import fr.az.fatalstrike.ui.screen.IngameScreen.ActionBar;
@@ -49,7 +53,6 @@ public final class FatalStrike
 			window.setSize(window.width - insets.left - insets.right, window.height - insets.top - insets.bottom);
 		} catch (HeadlessException e) {}
 		
-		System.out.println(window);
 		return window;
 	}
 	
@@ -91,6 +94,7 @@ public final class FatalStrike
 		public static final Font FONT_GUI_SMALL = FONT_GUI.deriveFont(30f);
 		public static final Font FONT_GAME_TITLE = FONT_GUI.deriveFont(50f);
 		
+		private List<Player> players = new ArrayList<>();
 		private GameState state;
 		
 		{
@@ -99,15 +103,19 @@ public final class FatalStrike
 				if (s == IngameScreen.screen())
 				{
 					ActionBar bar = IngameScreen.screen().getActionBar();
-					bar.getActions().forEach(a -> a.addItems(Arrays.asList(new Action(Resources.images().get("old/elf.png")), new Action(Resources.images().get("old/ogre.png")), new Action(Resources.images().get("old/arrow.png")), new Action(Resources.images().get("ui/validation.png"))), Action::getIcon));
+					bar.getDirections().forEach(d -> d.addItems(DirectionInfo::provideImage, Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT));
 				}
 			});
+			
+			players.add(new Player(Player.Character.ELF));
+			players.add(new Player(Player.Character.OGRE));
 		}
 		
 		private GameManager() {}
 		
 		public void setState(GameState state) { this.state = state; }
 		public GameState state() { return state; }
+		public List<Player> players() { return Collections.unmodifiableList(this.players); }
 		
 		public static enum GameState
 		{

@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -180,10 +181,13 @@ public class SlideMenu<T> extends GuiComponent
 	public void adjustWidthToHeight() { this.setItemWidth(this.itemHeight); }
 	public void adjustHeightToWidth() { this.setItemHeight(this.itemWidth); }
 	
+	public void clearItems() { this.items.clear(); }
 	public void removeItems(Collection<T> items) { items.forEach(this::removeItem); }
 	public void removeItem(T item) { this.getItems().remove(this.items.remove(item)); this.setWidth(this.getWidth()); }
 	
-	public void addItems(Collection<T> items, Function<T,Image> iconProvider) {
+	@SafeVarargs
+	public final void addItems(Function<T,Image> iconProvider, T... items) { this.addItems(iconProvider, Arrays.asList(items)); }
+	public void addItems(Function<T, Image> iconProvider, Collection<T> items) {
 		items.forEach(t -> this.addItem(t, iconProvider.apply(t))); }
 	
 	public void addItem(T item, Image icon)

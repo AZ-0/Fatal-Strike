@@ -8,9 +8,8 @@ import de.gurkenlabs.litiengine.Game;
 import de.gurkenlabs.litiengine.graphics.TextRenderer;
 import de.gurkenlabs.litiengine.gui.screens.Screen;
 import de.gurkenlabs.litiengine.input.Input;
-
-import fr.az.fatalstrike.FatalStrike.MAPS;
 import fr.az.fatalstrike.FatalStrike.GameManager;
+import fr.az.fatalstrike.FatalStrike.MAPS;
 import fr.az.fatalstrike.ui.KeyboardMenu;
 import fr.az.fatalstrike.ui.KeyboardMenu.Theme;
 
@@ -34,12 +33,12 @@ public class MenuScreen extends Screen
 	private void startGame()
 	{
 		this.menu.setEnabled(false);
-		Game.window().getRenderComponent().fadeOut(1500);
+		Game.window().getRenderComponent().fadeOut(750);
 		
 		Game.loop().perform(3500, () ->
 		{
 			Game.screens().display(IngameScreen.screen());
-			Game.window().getRenderComponent().fadeIn(2000);
+			Game.window().getRenderComponent().fadeIn(1000);
 		});
 	}
 	
