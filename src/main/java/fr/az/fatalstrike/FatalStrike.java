@@ -3,6 +3,7 @@ package fr.az.fatalstrike;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -21,16 +22,14 @@ import fr.az.fatalstrike.game.DirectionInfo;
 import fr.az.fatalstrike.game.Player;
 import fr.az.fatalstrike.game.field.GameField;
 import fr.az.fatalstrike.ui.screen.IngameScreen;
-import fr.az.fatalstrike.ui.screen.IngameScreen.ActionBar;
 import fr.az.fatalstrike.ui.screen.MenuScreen;
 
 public final class FatalStrike
 {
-	public static final String GAME_INFO_FILE = "game.xml";
-	public static final String GAME_FILE = "game.litidata";
+	private static final String GAME_INFO_FILE = "game.xml";
+	private static final String GAME_FILE = "game.litidata";
 	
-	public static final Graphics CRAPHICS = new BufferedImage(1, 1, 1).createGraphics();
-	
+	public static final Graphics2D GRAPHICS = new BufferedImage(1, 1, 1).createGraphics();
 	public static final Font FONT_GUI = Resources.fonts().get(PATHS.FONTS + "times_new_roman.ttf").deriveFont(40f);
 	public static final Font FONT_GUI_SMALL = FONT_GUI.deriveFont(30f);
 	public static final Font FONT_GAME = FONT_GUI;
@@ -73,7 +72,7 @@ public final class FatalStrike
 		Game.screens().add(MenuScreen.screen());
 		Game.screens().add(IngameScreen.screen());
 		
-		Game.graphics().setBaseRenderScale(6f * Game.window().getResolutionScale());
+		Game.graphics().setBaseRenderScale(2.1f * FatalStrike.window.getHeight() / 512f);
 		Game.window().setIconImage(Resources.images().get("logo.png"));
 		
 		Game.world().addLoadedListener(e ->
@@ -101,10 +100,8 @@ public final class FatalStrike
 			Game.screens().onScreenChanged(s ->
 			{
 				if (s == IngameScreen.screen())
-				{
-					ActionBar bar = IngameScreen.screen().getActionBar();
-					bar.getDirections().forEach(d -> d.addItems(DirectionInfo::provideImage, Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT));
-				}
+					IngameScreen.screen().actionBar().getDirections()
+					.forEach(d -> d.addItems(DirectionInfo::provideImage, Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT));
 			});
 			
 			players.add(new Player(Player.Character.ELF));

@@ -33,13 +33,7 @@ public class MenuScreen extends Screen
 	private void startGame()
 	{
 		this.menu.setEnabled(false);
-		Game.window().getRenderComponent().fadeOut(750);
-		
-		Game.loop().perform(3500, () ->
-		{
-			Game.screens().display(IngameScreen.screen());
-			Game.window().getRenderComponent().fadeIn(1000);
-		});
+		IngameScreen.screen().display();
 	}
 	
 	@Override

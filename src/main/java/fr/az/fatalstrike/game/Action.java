@@ -6,7 +6,12 @@ public class Action
 {
 	private Image icon;
 	
-	public Action(Image icon) {this.icon = icon;  }
+	public Action(Image icon) { this.icon = icon; }
+	
+	public void apply(Player p)
+	{
+		
+	}
 	
 	public Image getIcon() { return icon; }
 }
