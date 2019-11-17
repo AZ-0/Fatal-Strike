@@ -1,4 +1,4 @@
-package fr.az.fatalstrike.game;
+package fr.az.fatalstrike.core.game;
 
 import java.awt.Image;
 

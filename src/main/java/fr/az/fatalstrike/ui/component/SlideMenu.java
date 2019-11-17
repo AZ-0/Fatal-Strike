@@ -1,4 +1,4 @@
-package fr.az.fatalstrike.ui;
+package fr.az.fatalstrike.ui.component;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;

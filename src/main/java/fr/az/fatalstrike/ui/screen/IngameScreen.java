@@ -27,16 +27,16 @@ import de.gurkenlabs.litiengine.resources.Resources;
 import fr.az.fatalstrike.FatalStrike;
 import fr.az.fatalstrike.FatalStrike.IMAGES;
 import fr.az.fatalstrike.FatalStrike.MAPS;
-import fr.az.fatalstrike.game.Action;
-import fr.az.fatalstrike.game.Player;
-import fr.az.fatalstrike.ui.SlideMenu;
-import fr.az.fatalstrike.util.Tuple2;
+import fr.az.fatalstrike.core.game.Action;
+import fr.az.fatalstrike.core.game.Player;
+import fr.az.fatalstrike.ui.component.SlideMenu;
 import fr.az.fatalstrike.util.interfaces.TriConsumer;
+import fr.az.util.misc.tuples.Tuple2;
 
 public final class IngameScreen extends GameScreen
 {
 	private static final IngameScreen screen = new IngameScreen();
-	public static final String NAME = "INGAME";
+	public static final String NAME = "screen.ingame";
 
 	public static IngameScreen screen() { return screen; }
 
@@ -74,7 +74,7 @@ public final class IngameScreen extends GameScreen
 	protected void initializeComponents()
 	{
 		super.initializeComponents();
-		this.nextPlayerScreen = new Screen("INGAME.NEXT_PLAYER_SCREEN") {};
+		this.nextPlayerScreen = new Screen("screen.ingame.next_player") {};
 
 		this.nextPlayerButton = new ImageComponent(0, 0, 0, 0, "YOU SHALL NOT SEE THIS");
 		this.nextPlayerButton.setFont(FatalStrike.FONT_GUI);
@@ -141,7 +141,7 @@ public final class IngameScreen extends GameScreen
 		//Actions loading
 		Player p = FatalStrike.manager().players().get(this.player);
 		this.actionBar.getActions().forEach(SlideMenu::clearItems);
-		this.actionBar.getActions().forEach(s -> s.addItems(Action::getIcon, p.getCharacter().getActions()));
+		this.actionBar.getActions().forEach(s -> s.addItems(Action::getIcon, p.getRace().getActions()));
 	}
 
 	public void onPlayerChanged(TriConsumer<IngameScreen, Player, Player> action) { this.onPlayerChanged.add(action); }

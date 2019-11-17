@@ -1,4 +1,4 @@
-package fr.az.fatalstrike;
+package fr.az.fatalstrike.ui;
 
 import java.awt.Image;
 import java.awt.event.KeyEvent;

@@ -1,4 +1,4 @@
-package fr.az.fatalstrike.game.field;
+package fr.az.fatalstrike.core.game.field;
 
 import java.awt.geom.Point2D;
 

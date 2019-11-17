@@ -26,6 +26,7 @@ repositories {
 
 dependencies
 {
+	compile (name: 'Utilities', ext: 'jar')
 	compile 'org.json:json:20180813'
 	compile 'de.gurkenlabs:litiengine:0.4.17+'
 	testImplementation 'junit:junit:4.12'

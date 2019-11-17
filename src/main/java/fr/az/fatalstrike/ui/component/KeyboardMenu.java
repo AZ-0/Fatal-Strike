@@ -1,4 +1,4 @@
-package fr.az.fatalstrike.ui;
+package fr.az.fatalstrike.ui.component;
 
 import java.awt.Color;
 import java.awt.RenderingHints;

@@ -1,4 +1,4 @@
-package fr.az.fatalstrike.game.field;
+package fr.az.fatalstrike.core.game.field;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 import de.gurkenlabs.litiengine.entities.CombatEntity;
 import de.gurkenlabs.litiengine.entities.IEntity;
 import de.gurkenlabs.litiengine.environment.tilemap.ITile;
-import fr.az.fatalstrike.game.field.tiles.StartTile;
-import fr.az.fatalstrike.game.field.tiles.VoidTile;
+
+import fr.az.fatalstrike.core.game.field.tiles.StartTile;
+import fr.az.fatalstrike.core.game.field.tiles.VoidTile;
 
 public abstract class Tile
 {
