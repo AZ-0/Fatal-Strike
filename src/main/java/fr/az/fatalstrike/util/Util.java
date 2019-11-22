@@ -1,13 +1,13 @@
 package fr.az.fatalstrike.util;
 
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 
  * @author A~Z
- * @since Minecraft GDK 0.0.1
  */
 public class Util
 {
@@ -15,16 +15,24 @@ public class Util
 	public static <T> Set<T> newSet(T ... values)
 	{
 		Set<T> set = new HashSet<>();
-		set.addAll(Arrays.asList(values));
+
+		for (T value : values)
+			set.add(value);
+
 		return set;
 	}
-	
-	public static class PATH
+
+	public static String readAll(Reader r) throws IOException
 	{
-		public final static String IMAGE = "/img/";
-		
-		public final static String VIEW = "/view/";
-			public final static String COMPONENT = "/view/component/";
-			public final static String FXML = "/view/fxml/";
+		BufferedReader reader = new BufferedReader(r);
+
+		StringBuilder sb = new StringBuilder();
+		String line;
+
+		while ((line = reader.readLine()) != null)
+			sb.append(line +'\n');
+
+		reader.close();
+		return sb.substring(0, sb.length() -1);
 	}
 }

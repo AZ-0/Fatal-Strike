@@ -77,6 +77,7 @@ public final class IngameScreen extends GameScreen
 		this.nextPlayerScreen = new Screen("screen.ingame.next_player") {};
 
 		this.nextPlayerButton = new ImageComponent(0, 0, 0, 0, "YOU SHALL NOT SEE THIS");
+		this.nextPlayerScreen.getComponents().add(this.nextPlayerButton);
 		this.nextPlayerButton.setFont(FatalStrike.FONT_GUI);
 		this.nextPlayerButton.setEnabled(true);
 		this.nextPlayerButton.setVisible(true);
@@ -89,7 +90,6 @@ public final class IngameScreen extends GameScreen
 				Game.window().getRenderComponent().fadeIn(256);
 			});
 		});
-		this.nextPlayerScreen.getComponents().add(this.nextPlayerButton);
 
 		this.actionBar = new ActionBar(0, 0);
 		this.actionBar.buttonValidation.onClicked(e ->
