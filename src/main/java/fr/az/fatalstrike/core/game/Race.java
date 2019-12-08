@@ -36,14 +36,13 @@ public final class Race
 	{
 		PropertyBuilder<Integer> health = new PropertyBuilder<>("health", 5, Integer.class, Parser.POSITIVE_INTEGER);
 
-
 		List<PropertyBuilder<?>> basicBuilders = Arrays.asList(health);
 		new Race(Race.loadSelectionImage(ELF), ELF, basicBuilders);
 		new Race(Race.loadSelectionImage(OGRE), OGRE, basicBuilders);
 	}
 
-	private static BufferedImage loadSelectionImage(String NAME) {
-		return Resources.images().get("ui/selection/"+ NAME.toLowerCase() +".png"); }
+	private static BufferedImage loadSelectionImage(String name) {
+		return Resources.images().get("ui/selection/"+ name.toLowerCase() +".png"); }
 
 	public static Dimension getSelectionIconSize()
 	{

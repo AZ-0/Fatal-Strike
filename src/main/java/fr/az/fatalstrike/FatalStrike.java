@@ -2,9 +2,7 @@ package fr.az.fatalstrike;
 
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -33,11 +31,6 @@ public final class FatalStrike
 	private static final String GAME_INFO_FILE = "game.xml";
 	private static final String GAME_FILE = "game.litidata";
 
-	public static final Graphics2D GRAPHICS = new BufferedImage(1, 1, 1).createGraphics();
-	public static final Font FONT_GUI = Resources.fonts().get(PATHS.FONTS + "times_new_roman.ttf").deriveFont(40f);
-	public static final Font FONT_GUI_SMALL = FONT_GUI.deriveFont(30f);
-	public static final Font FONT_GAME = FONT_GUI;
-
 	private static JFrame window;
 	private static GameManager manager;
 	protected static GameField field;
@@ -64,13 +57,12 @@ public final class FatalStrike
 	public static synchronized void main(String... args)
 	{
 		Game.setInfo(GAME_INFO_FILE);
+		Game.config().graphics().setFullscreen(true);
 		Game.init();
 
 		FatalStrike.manager = new GameManager();
 		FatalStrike.window = (JFrame) Game.window().getHostControl();
-
 		FatalStrike.window.setResizable(false);
-		FatalStrike.window.setExtendedState(Frame.MAXIMIZED_BOTH);
 
 		Resources.load(GAME_FILE);
 		Game.screens().add(MenuScreen.screen());
@@ -92,13 +84,8 @@ public final class FatalStrike
 
 	public static final class GameManager
 	{
-		public static final Graphics CRAPHICS = new BufferedImage(1, 1, 1).createGraphics();
-
-		public static final Font FONT_GUI = Resources.fonts().get(PATHS.FONTS + "times_new_roman.ttf").deriveFont(40f);
-		public static final Font FONT_GUI_SMALL = FONT_GUI.deriveFont(30f);
-		public static final Font FONT_GAME_TITLE = FONT_GUI.deriveFont(50f);
-
-		private List<Player> players = new ArrayList<>();
+		private final List<Player> players = new ArrayList<>();
+		private final List<Player> playersUnmodifiable = Collections.unmodifiableList(this.players);
 		private GameState state;
 
 		{
@@ -114,7 +101,7 @@ public final class FatalStrike
 
 		public void setState(GameState state) { this.state = state; }
 		public GameState state() { return this.state; }
-		public List<Player> players() { return Collections.unmodifiableList(this.players); }
+		public List<Player> getPlayers() { return this.playersUnmodifiable; }
 
 		public static enum GameState
 		{
@@ -122,13 +109,53 @@ public final class FatalStrike
 			PLAYING,
 			;
 		}
+
+		public static enum Map
+		{
+			TITLE("title"),
+			FIGHT("fight"),
+			;
+
+			private final String name;
+
+			private Map(String name)
+			{
+				this.name = name;
+			}
+
+			public void load() { Game.world().loadEnvironment(this.getName()); }
+			public String getName() { return this.name; }
+		}
 	}
 
-	public static final class MAPS
+	public static final class UIManager
 	{
-		private MAPS() {}
-		public static final String TITLE = "title";
-		public static final String FIGHT = "fight";
+		public static final Graphics GRAPHICS = new BufferedImage(1, 1, 1).createGraphics();
+
+		public static final Font FONT_GUI = Resources.fonts().get(PATHS.FONTS + "times_new_roman.ttf").deriveFont(40f);
+		public static final Font FONT_GUI_SMALL = FONT_GUI.deriveFont(30f);
+		public static final Font FONT_GAME_TITLE = FONT_GUI.deriveFont(50f);
+
+		private UIManager() {}
+
+		public static enum Image
+		{
+			ARROW_LEFT("arrow_left"),
+			ARROW_RIGHT("arrow_right"),
+			;
+
+			private final String file;
+			private final BufferedImage image;
+
+			private Image(String file)
+			{
+				this.file = file + ".png";
+				this.image = Resources.images().get(PATHS.GUI + this.file);
+			}
+
+			public String getFileName() { return this.file; }
+			public BufferedImage getImage() { return this.image; }
+		}
 	}
 
 	public static final class PATHS
@@ -137,12 +164,5 @@ public final class FatalStrike
 		public static final String FONTS = "fonts" + File.separatorChar;
 		public static final String GUI = "ui" + File.separatorChar;
 		public static final String SPRITES = "sprites" + File.separatorChar;
-	}
-
-	public static final class IMAGES
-	{
-		private IMAGES() {}
-		public static final BufferedImage UI_ARROW_LEFT = Resources.images().get(PATHS.GUI + "arrow_left.png");
-		public static final BufferedImage UI_ARROW_RIGHT = Resources.images().get(PATHS.GUI + "arrow_right.png");
 	}
 }

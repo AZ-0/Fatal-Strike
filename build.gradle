@@ -1,7 +1,7 @@
 plugins {
-    id 'java'
-    id 'eclipse'
-    id 'application'
+	id 'java'
+	id 'eclipse'
+	id 'application'
 	id 'com.stehno.natives' version '0.3.1'
 }
 
@@ -19,9 +19,9 @@ natives {
 }
 
 repositories {
-    jcenter()
-    mavenCentral()
-    flatDir { dirs 'resources' }
+	jcenter()
+	mavenCentral()
+	flatDir { dirs 'resources' }
 }
 
 dependencies

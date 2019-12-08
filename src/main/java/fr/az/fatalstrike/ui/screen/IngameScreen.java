@@ -25,8 +25,8 @@ import de.gurkenlabs.litiengine.gui.screens.Screen;
 import de.gurkenlabs.litiengine.resources.Resources;
 
 import fr.az.fatalstrike.FatalStrike;
-import fr.az.fatalstrike.FatalStrike.IMAGES;
-import fr.az.fatalstrike.FatalStrike.MAPS;
+import fr.az.fatalstrike.FatalStrike.GameManager.Map;
+import fr.az.fatalstrike.FatalStrike.UIManager;
 import fr.az.fatalstrike.core.game.Action;
 import fr.az.fatalstrike.core.game.Player;
 import fr.az.fatalstrike.ui.component.SlideMenu;
@@ -53,11 +53,11 @@ public final class IngameScreen extends GameScreen
 	public void display() { this.display(this.player); }
 	public void display(int playerIndex)
 	{
-		final Player p = FatalStrike.manager().players().get(playerIndex %= FatalStrike.manager().players().size());
-		this.onPlayerChanged.forEach(c -> c.accept(this, FatalStrike.manager().players().get(this.player), p));
+		final Player p = FatalStrike.manager().getPlayers().get(playerIndex %= FatalStrike.manager().getPlayers().size());
+		this.onPlayerChanged.forEach(c -> c.accept(this, FatalStrike.manager().getPlayers().get(this.player), p));
 
 		String text = " Player " + (playerIndex + 1);
-		FontMetrics metrics = FatalStrike.GRAPHICS.getFontMetrics(FatalStrike.FONT_GUI);
+		FontMetrics metrics = UIManager.GRAPHICS.getFontMetrics(UIManager.FONT_GUI);
 		int width = metrics.stringWidth(text);
 		int height = metrics.getHeight();
 
@@ -78,7 +78,7 @@ public final class IngameScreen extends GameScreen
 
 		this.nextPlayerButton = new ImageComponent(0, 0, 0, 0, "YOU SHALL NOT SEE THIS");
 		this.nextPlayerScreen.getComponents().add(this.nextPlayerButton);
-		this.nextPlayerButton.setFont(FatalStrike.FONT_GUI);
+		this.nextPlayerButton.setFont(UIManager.FONT_GUI);
 		this.nextPlayerButton.setEnabled(true);
 		this.nextPlayerButton.setVisible(true);
 		this.nextPlayerButton.onClicked(e ->
@@ -96,15 +96,15 @@ public final class IngameScreen extends GameScreen
 		{
 			Game.window().getRenderComponent().fadeOut(512);
 
-			if (this.player < FatalStrike.manager().players().size() -1)
+			if (this.player < FatalStrike.manager().getPlayers().size() -1)
 			{
-				Player p = FatalStrike.manager().players().get(this.player);
+				Player p = FatalStrike.manager().getPlayers().get(this.player);
 				this.actionBar.getSlides().forEach(t -> p.scheduledActions().add(new Tuple2<>(t.a.getSelectedItem(), t.b.getSelectedItem())));
 				Game.loop().perform(512, () -> this.display(this.player + 1));
 			}
 			else
 			{
-				FatalStrike.manager().players().forEach(Player::play);
+				FatalStrike.manager().getPlayers().forEach(Player::play);
 				this.display(0);
 			}
 		});
@@ -117,13 +117,13 @@ public final class IngameScreen extends GameScreen
 	{
 		super.prepare();
 		Game.world().camera().setClampToMap(false);
-		Game.world().loadEnvironment(MAPS.FIGHT);
+		Map.FIGHT.load();
 
 		IMap map = Game.world().environment().getMap();
 		Point2D focus = Game.world().environment().getCenter();
 		Dimension screen = FatalStrike.getEffectiveWindowSize();
 
-		//Display Computations
+		//Compute values
 		float mapWidth = map.getWidth() * map.getTileWidth() * Game.graphics().getBaseRenderScale();
 		float mapHeight = map.getHeight() * map.getTileHeight() * Game.graphics().getBaseRenderScale();
 
@@ -139,7 +139,7 @@ public final class IngameScreen extends GameScreen
 		this.actionBar.setDimension(screen.width - actionBarX - offset, mapHeight);
 
 		//Actions loading
-		Player p = FatalStrike.manager().players().get(this.player);
+		Player p = FatalStrike.manager().getPlayers().get(this.player);
 		this.actionBar.getActions().forEach(SlideMenu::clearItems);
 		this.actionBar.getActions().forEach(s -> s.addItems(Action::getIcon, p.getRace().getActions()));
 	}
@@ -147,6 +147,7 @@ public final class IngameScreen extends GameScreen
 	public void onPlayerChanged(TriConsumer<IngameScreen, Player, Player> action) { this.onPlayerChanged.add(action); }
 	public ActionBar actionBar() { return this.actionBar; }
 
+	public int getPlayer() { return this.player; }
 
 	public static class ActionBar extends GuiComponent
 	{
@@ -165,9 +166,8 @@ public final class IngameScreen extends GameScreen
 		protected ActionBar(double x, double y, double width, double height) { super(x, y, width, height); }
 
 		{
-			IMAGES.UI_ARROW_LEFT.getHeight();
-			SlideMenu.ARROW_LEFT = IMAGES.UI_ARROW_LEFT;
-			SlideMenu.ARROW_RIGHT = IMAGES.UI_ARROW_RIGHT;
+			SlideMenu.ARROW_LEFT = UIManager.Image.ARROW_LEFT.getImage();
+			SlideMenu.ARROW_RIGHT = UIManager.Image.ARROW_RIGHT.getImage();
 
 			for (int i = 0; i < 3; i++)
 			{

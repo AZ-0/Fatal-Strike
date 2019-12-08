@@ -9,8 +9,8 @@ import de.gurkenlabs.litiengine.graphics.TextRenderer;
 import de.gurkenlabs.litiengine.gui.screens.Screen;
 import de.gurkenlabs.litiengine.input.Input;
 
-import fr.az.fatalstrike.FatalStrike.GameManager;
-import fr.az.fatalstrike.FatalStrike.MAPS;
+import fr.az.fatalstrike.FatalStrike.GameManager.Map;
+import fr.az.fatalstrike.FatalStrike.UIManager;
 import fr.az.fatalstrike.ui.component.KeyboardMenu;
 import fr.az.fatalstrike.ui.component.KeyboardMenu.Theme;
 
@@ -34,7 +34,7 @@ public class MenuScreen extends Screen
 	private void startGame()
 	{
 		this.menu.setEnabled(false);
-		IngameScreen.screen().display();
+		Game.screens().display(SelectionScreen.screen());
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class MenuScreen extends Screen
 		super.prepare();
 
 		Game.window().getRenderComponent().setBackground(Color.BLACK);
-		Game.world().loadEnvironment(MAPS.TITLE);
+		Map.TITLE.load();
 		Game.world().camera().setFocus(Game.world().environment().getCenter());
 	}
 
@@ -76,7 +76,7 @@ public class MenuScreen extends Screen
 	{
 		Game.world().environment().render(g);
 
-		g.setFont(GameManager.FONT_GUI);
+		g.setFont(UIManager.FONT_GUI);
 		g.setColor(Color.WHITE);
 
 		final double sWidth = g.getFontMetrics().stringWidth(AUTHORS);

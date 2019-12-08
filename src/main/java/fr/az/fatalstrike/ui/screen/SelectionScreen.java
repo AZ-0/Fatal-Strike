@@ -1,7 +1,9 @@
 package fr.az.fatalstrike.ui.screen;
 
 import java.awt.Dimension;
+import java.awt.geom.Point2D;
 
+import de.gurkenlabs.litiengine.Game;
 import de.gurkenlabs.litiengine.gui.screens.GameScreen;
 
 import fr.az.fatalstrike.core.game.Race;
@@ -22,11 +24,18 @@ public class SelectionScreen extends GameScreen
 	protected void initializeComponents()
 	{
 		super.initializeComponents();
-
-
 		Dimension iconSize = Race.getSelectionIconSize();
 
 		this.selection = new SlideMenu<>(0, 0, iconSize.width, iconSize.height);
 		this.selection.addItems(Race::getSelectionIcon, Race.all().values());
+		this.getComponents().add(this.selection);
+	}
+
+	@Override
+	public void prepare()
+	{
+		super.prepare();
+		Point2D center = Game.window().getCenter();
+		this.selection.setLocation(center.getX() - this.selection.getWidth() / 2f, center.getY() - this.selection.getHeight() / 2f);
 	}
 }
