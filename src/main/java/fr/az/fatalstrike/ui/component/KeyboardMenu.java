@@ -10,7 +10,7 @@ import de.gurkenlabs.litiengine.Game;
 import de.gurkenlabs.litiengine.gui.Menu;
 import de.gurkenlabs.litiengine.input.Input;
 
-import fr.az.fatalstrike.FatalStrike.UIManager;
+import fr.az.fatalstrike.UIManager;
 
 public class KeyboardMenu extends Menu
 {

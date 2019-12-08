@@ -9,8 +9,8 @@ import de.gurkenlabs.litiengine.graphics.TextRenderer;
 import de.gurkenlabs.litiengine.gui.screens.Screen;
 import de.gurkenlabs.litiengine.input.Input;
 
-import fr.az.fatalstrike.FatalStrike.GameManager.Map;
-import fr.az.fatalstrike.FatalStrike.UIManager;
+import fr.az.fatalstrike.GameManager.Map;
+import fr.az.fatalstrike.UIManager;
 import fr.az.fatalstrike.ui.component.KeyboardMenu;
 import fr.az.fatalstrike.ui.component.KeyboardMenu.Theme;
 

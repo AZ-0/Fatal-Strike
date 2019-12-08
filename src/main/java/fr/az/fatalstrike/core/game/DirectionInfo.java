@@ -4,15 +4,17 @@ import java.awt.image.BufferedImage;
 
 import de.gurkenlabs.litiengine.Direction;
 import de.gurkenlabs.litiengine.resources.Resources;
-import fr.az.fatalstrike.FatalStrike.PATHS;
+
+import fr.az.fatalstrike.FatalStrike.Path;
 
 public class DirectionInfo
 {
-	public final static BufferedImage IMG_DOWN = Resources.images().get(PATHS.GUI + "dir/down.png");
-	public final static BufferedImage IMG_LEFT = Resources.images().get(PATHS.GUI + "dir/left.png");
-	public final static BufferedImage IMG_RIGHT = Resources.images().get(PATHS.GUI + "dir/right.png");
-	public final static BufferedImage IMG_UP = Resources.images().get(PATHS.GUI + "dir/up.png");
-	
+	private final static String DIR_PATH = "dir/";
+	public final static BufferedImage IMG_DOWN = Resources.images().get(Path.GUI.getPath() + DIR_PATH +"down.png");
+	public final static BufferedImage IMG_LEFT = Resources.images().get(Path.GUI.getPath() + DIR_PATH + "left.png");
+	public final static BufferedImage IMG_RIGHT = Resources.images().get(Path.GUI.getPath() + DIR_PATH + "right.png");
+	public final static BufferedImage IMG_UP = Resources.images().get(Path.GUI.getPath() + DIR_PATH + "up.png");
+
 	public static BufferedImage provideImage(Direction direction)
 	{
 		switch(direction)
@@ -24,14 +26,14 @@ public class DirectionInfo
 			default: return null;
 		}
 	}
-	
+
 	protected Direction direction = Direction.UNDEFINED;
-	
+
 	public DirectionInfo() {}
 	public DirectionInfo(Direction direction) { this.direction = direction; }
-	
-	public BufferedImage provideImage() { return provideImage(this.getDirection()); }
-	
+
+	public BufferedImage provideImage() { return DirectionInfo.provideImage(this.getDirection()); }
+
 	public void setDirection(Direction direction) { this.direction = direction; }
 	public Direction getDirection() { return this.direction; }
 }

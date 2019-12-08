@@ -25,8 +25,8 @@ import de.gurkenlabs.litiengine.gui.screens.Screen;
 import de.gurkenlabs.litiengine.resources.Resources;
 
 import fr.az.fatalstrike.FatalStrike;
-import fr.az.fatalstrike.FatalStrike.GameManager.Map;
-import fr.az.fatalstrike.FatalStrike.UIManager;
+import fr.az.fatalstrike.GameManager.Map;
+import fr.az.fatalstrike.UIManager;
 import fr.az.fatalstrike.core.game.Action;
 import fr.az.fatalstrike.core.game.Player;
 import fr.az.fatalstrike.ui.component.SlideMenu;
@@ -53,8 +53,8 @@ public final class IngameScreen extends GameScreen
 	public void display() { this.display(this.player); }
 	public void display(int playerIndex)
 	{
-		final Player p = FatalStrike.manager().getPlayers().get(playerIndex %= FatalStrike.manager().getPlayers().size());
-		this.onPlayerChanged.forEach(c -> c.accept(this, FatalStrike.manager().getPlayers().get(this.player), p));
+		final Player p = FatalStrike.gameManager().getPlayers().get(playerIndex %= FatalStrike.gameManager().getPlayers().size());
+		this.onPlayerChanged.forEach(c -> c.accept(this, FatalStrike.gameManager().getPlayers().get(this.player), p));
 
 		String text = " Player " + (playerIndex + 1);
 		FontMetrics metrics = UIManager.GRAPHICS.getFontMetrics(UIManager.FONT_GUI);
@@ -96,15 +96,15 @@ public final class IngameScreen extends GameScreen
 		{
 			Game.window().getRenderComponent().fadeOut(512);
 
-			if (this.player < FatalStrike.manager().getPlayers().size() -1)
+			if (this.player < FatalStrike.gameManager().getPlayers().size() -1)
 			{
-				Player p = FatalStrike.manager().getPlayers().get(this.player);
+				Player p = FatalStrike.gameManager().getPlayers().get(this.player);
 				this.actionBar.getSlides().forEach(t -> p.scheduledActions().add(new Tuple2<>(t.a.getSelectedItem(), t.b.getSelectedItem())));
 				Game.loop().perform(512, () -> this.display(this.player + 1));
 			}
 			else
 			{
-				FatalStrike.manager().getPlayers().forEach(Player::play);
+				FatalStrike.gameManager().getPlayers().forEach(Player::play);
 				this.display(0);
 			}
 		});
@@ -139,7 +139,7 @@ public final class IngameScreen extends GameScreen
 		this.actionBar.setDimension(screen.width - actionBarX - offset, mapHeight);
 
 		//Actions loading
-		Player p = FatalStrike.manager().getPlayers().get(this.player);
+		Player p = FatalStrike.gameManager().getPlayers().get(this.player);
 		this.actionBar.getActions().forEach(SlideMenu::clearItems);
 		this.actionBar.getActions().forEach(s -> s.addItems(Action::getIcon, p.getRace().getActions()));
 	}
