@@ -1,6 +1,7 @@
 package fr.az.fatalstrike.core.game;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 import de.gurkenlabs.litiengine.Direction;
 import de.gurkenlabs.litiengine.resources.Resources;
@@ -9,11 +10,11 @@ import fr.az.fatalstrike.FatalStrike.Path;
 
 public class DirectionInfo
 {
-	private final static String DIR_PATH = "dir/";
-	public final static BufferedImage IMG_DOWN = Resources.images().get(Path.GUI.getPath() + DIR_PATH +"down.png");
-	public final static BufferedImage IMG_LEFT = Resources.images().get(Path.GUI.getPath() + DIR_PATH + "left.png");
-	public final static BufferedImage IMG_RIGHT = Resources.images().get(Path.GUI.getPath() + DIR_PATH + "right.png");
-	public final static BufferedImage IMG_UP = Resources.images().get(Path.GUI.getPath() + DIR_PATH + "up.png");
+	private final static String DIR_PATH = "dir" + File.separatorChar;
+	public final static BufferedImage IMG_DOWN = Resources.images().get(Path.IMAGES + DIR_PATH +"down.png");
+	public final static BufferedImage IMG_LEFT = Resources.images().get(Path.IMAGES + DIR_PATH + "left.png");
+	public final static BufferedImage IMG_RIGHT = Resources.images().get(Path.IMAGES + DIR_PATH + "right.png");
+	public final static BufferedImage IMG_UP = Resources.images().get(Path.IMAGES + DIR_PATH + "up.png");
 
 	public static BufferedImage provideImage(Direction direction)
 	{

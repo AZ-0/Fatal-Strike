@@ -25,6 +25,7 @@ import de.gurkenlabs.litiengine.gui.screens.Screen;
 import de.gurkenlabs.litiengine.resources.Resources;
 
 import fr.az.fatalstrike.FatalStrike;
+import fr.az.fatalstrike.FatalStrike.Path;
 import fr.az.fatalstrike.GameManager.Map;
 import fr.az.fatalstrike.UIManager;
 import fr.az.fatalstrike.core.game.Action;
@@ -99,7 +100,7 @@ public final class IngameScreen extends GameScreen
 			if (this.player < FatalStrike.gameManager().getPlayers().size() -1)
 			{
 				Player p = FatalStrike.gameManager().getPlayers().get(this.player);
-				this.actionBar.getSlides().forEach(t -> p.scheduledActions().add(new Tuple2<>(t.a.getSelectedItem(), t.b.getSelectedItem())));
+				this.actionBar.getSlides().forEach(t -> p.scheduledActions().add(new Tuple2<>(t.a.getFocusedItem(), t.b.getFocusedItem())));
 				Game.loop().perform(512, () -> this.display(this.player + 1));
 			}
 			else
@@ -151,7 +152,7 @@ public final class IngameScreen extends GameScreen
 
 	public static class ActionBar extends GuiComponent
 	{
-		private static final BufferedImage BUTTON_VALIDATION = Resources.images().get("ui/validation.png");
+		private static final BufferedImage BUTTON_VALIDATION = Resources.images().get(Path.IMAGES + "validation.png");
 
 		private ArrayList<Tuple2<SlideMenu<Action>, SlideMenu<Direction>>> slides = new ArrayList<>();
 		private ImageComponent buttonValidation;
@@ -166,9 +167,6 @@ public final class IngameScreen extends GameScreen
 		protected ActionBar(double x, double y, double width, double height) { super(x, y, width, height); }
 
 		{
-			SlideMenu.ARROW_LEFT = UIManager.Image.ARROW_LEFT.getImage();
-			SlideMenu.ARROW_RIGHT = UIManager.Image.ARROW_RIGHT.getImage();
-
 			for (int i = 0; i < 3; i++)
 			{
 				Tuple2<SlideMenu<Action>, SlideMenu<Direction>> tuple = new Tuple2<>(

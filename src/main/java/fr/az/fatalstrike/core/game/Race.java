@@ -13,6 +13,7 @@ import de.gurkenlabs.litiengine.graphics.Spritesheet;
 import de.gurkenlabs.litiengine.resources.Resources;
 
 import fr.az.fatalstrike.FatalStrike;
+import fr.az.fatalstrike.FatalStrike.Path;
 import fr.az.fatalstrike.core.game.Player.State;
 import fr.az.util.parsing.property.PropertyBuilder;
 import fr.az.util.parsing.string.Parser;
@@ -31,6 +32,7 @@ public final class Race
 	public static final String OGRE = "Ogre";
 
 	private static final HashMap<String, Race> RACES = new HashMap<>();
+	private static final Map<String, Race> RACES_UNMODIFIABLE = Collections.unmodifiableMap(RACES);
 
 	public static void init()
 	{
@@ -42,12 +44,13 @@ public final class Race
 	}
 
 	private static BufferedImage loadSelectionImage(String name) {
-		return Resources.images().get("ui/selection/"+ name.toLowerCase() +".png"); }
+		return Resources.images().get(Path.IMAGES.getPath() + "selection/"+ name.toLowerCase() +".png"); }
 
 	public static Dimension getSelectionIconSize()
 	{
 		Dimension size = FatalStrike.getEffectiveWindowSize();
-		size.setSize(size.getWidth() / 6d, size.getHeight() / 2d);
+		double min = Math.min(size.getWidth() / 6f, size.getHeight() / 2f);
+		size.setSize(min, min);
 		return size;
 	}
 
@@ -58,7 +61,7 @@ public final class Race
 	 * </blockquote></code>
 	 * @return an immutable Map containing all Race instances
 	 */
-	public static Map<String, Race> all() { return Collections.unmodifiableMap(RACES); }
+	public static Map<String, Race> all() { return RACES_UNMODIFIABLE; }
 
 	private final List<PropertyBuilder<?>> propertyBuilders;
 	private final BufferedImage selectionIcon;

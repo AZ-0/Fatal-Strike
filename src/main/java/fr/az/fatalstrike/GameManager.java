@@ -9,6 +9,7 @@ import de.gurkenlabs.litiengine.Game;
 
 import fr.az.fatalstrike.core.game.DirectionInfo;
 import fr.az.fatalstrike.core.game.Player;
+import fr.az.fatalstrike.core.game.Race;
 import fr.az.fatalstrike.core.game.field.GameField;
 import fr.az.fatalstrike.ui.screen.IngameScreen;
 
@@ -36,6 +37,11 @@ public final class GameManager
 			Game.world().camera().setFocus(e.getCenter());
 			this.field = GameField.get(e.getMap().getTileLayers().get(0));
 		});
+	}
+
+	{
+		this.players.add(new Player(Race.all().get(Race.ELF)));
+		this.players.add(new Player(Race.all().get(Race.OGRE)));
 	}
 
 	public void setState(GameState state) { this.state = state; }

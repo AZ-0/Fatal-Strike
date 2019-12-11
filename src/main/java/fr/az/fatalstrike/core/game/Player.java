@@ -20,7 +20,7 @@ public final class Player extends PropertyHolder
 	private State state = State.IDLE;
 	private Tile tile;
 
-	Player(Race race)
+	public Player(Race race)
 	{
 		super(race.getPropertyBuilders());
 		this.handle = new PlayerEntity(race.getName());

@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
 import de.gurkenlabs.litiengine.Game;
-import de.gurkenlabs.litiengine.graphics.TextRenderer;
+import de.gurkenlabs.litiengine.gui.screens.GameScreen;
 import de.gurkenlabs.litiengine.gui.screens.Screen;
 import de.gurkenlabs.litiengine.input.Input;
 
@@ -17,24 +17,25 @@ import fr.az.fatalstrike.ui.component.KeyboardMenu.Theme;
 public class MenuScreen extends Screen
 {
 	public static final String NAME = "screen.menu";
-	public static final String AUTHORS = "By Justin \"A~Z\" Carel & Paul \"Heledryon\" Carel";
 
-	private final static MenuScreen screen = new MenuScreen();
-
-	private KeyboardMenu menu;
+	private final static MenuScreen screen = new MenuScreen(IngameScreen.screen());
 
 	public static MenuScreen screen() { return screen; }
 
-	private MenuScreen()
+	private GameScreen forward;
+	private KeyboardMenu menu;
+
+	private MenuScreen(GameScreen forward)
 	{
 		super(NAME);
+		this.forward = forward;
 		Input.keyboard().onKeyPressed(KeyEvent.VK_ESCAPE, e -> { if (this.isVisible()) System.exit(0); });
 	}
 
 	private void startGame()
 	{
 		this.menu.setEnabled(false);
-		Game.screens().display(SelectionScreen.screen());
+		Game.screens().display(this.forward);
 	}
 
 	@Override
@@ -79,9 +80,9 @@ public class MenuScreen extends Screen
 		g.setFont(UIManager.FONT_GUI);
 		g.setColor(Color.WHITE);
 
-		final double sWidth = g.getFontMetrics().stringWidth(AUTHORS);
-		TextRenderer.renderWithOutline(g, AUTHORS, Game.world().environment().getCenter().getX() - sWidth / 3, Game.window().getResolution().getHeight() * 19 / 20, Color.BLACK);
-
 		super.render(g);
 	}
+
+	public GameScreen getForwardScreen() { return this.forward; }
+	public void setForwardScreen(GameScreen screen) { this.forward = screen; }
 }

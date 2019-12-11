@@ -28,46 +28,47 @@ public class SlideMenu<T> extends GuiComponent
 	private static final int DEFAULT_SIZE = 128;
 	private static final int MIN_SIZE = 2;
 
-	public static BufferedImage ARROW_LEFT;
-	public static BufferedImage ARROW_RIGHT;
+	public static BufferedImage ARROW_LEFT, ARROW_RIGHT, FOCUS;
 
-	private int focus = 0;
-	private long lastSlide = 0;
-	private boolean mousePressingButtonLeft = false;
-	private boolean mousePressingButtonRight = false;
-	private boolean renderChanged = true;
+	protected T focused;
+	protected ImageComponent buttonLeft, buttonRight, focusing;
+	protected int itemHeight, itemWidth, maxRenderAmount = DEFAULT_MAX_RENDER_AMOUNT;
+
+	private boolean mousePressingButtonLeft, mousePressingButtonRight, renderChanged = true;
+	private int focus;
+	private long lastSlide;
 	private Set<Consumer<SlideMenu<T>>> onRenderChanged = new HashSet<>();
 
-	private final BufferedImage arrowLeft;
-	private final BufferedImage arrowRight;
-	protected ImageComponent buttonLeft;
-	protected ImageComponent buttonRight;
-
-	protected int maxRenderAmount = DEFAULT_MAX_RENDER_AMOUNT;
-	protected int itemHeight;
-	protected int itemWidth;
-
 	protected final HashMap<T, ImageComponent> items;
-	protected T selected;
+	private final BufferedImage arrowLeft, arrowRight;
 
-	public SlideMenu(double x, double y) {
-		this(x, y, DEFAULT_SIZE, DEFAULT_SIZE); }
+	public SlideMenu(double x, double y)
+	{
+		this(x, y, DEFAULT_SIZE, DEFAULT_SIZE);
+	}
 
-	public SlideMenu(double x, double y, int itemWidth, int itemHeight) {
-		this(x, y, itemWidth, itemHeight, null); }
+	public SlideMenu(double x, double y, int itemWidth, int itemHeight)
+	{
+		this(x, y, itemWidth, itemHeight, null);
+	}
 
-	public SlideMenu(double x, double y, double width, double height) {
-		this(x, y, width, height, null); }
+	public SlideMenu(double x, double y, double width, double height)
+	{
+		this(x, y, width, height, null);
+	}
 
 	@SafeVarargs
-	public SlideMenu(double x, double y, double width, double height, Function<T,Image> iconProvider, T... items) {
-		this(x, y, (int) width / 5, (int) height, iconProvider, items); }
+	public SlideMenu(double x, double y, double width, double height, Function<T,Image> iconProvider, T... items)
+	{
+		this(x, y, (int) width / (DEFAULT_MAX_RENDER_AMOUNT + 2), (int) height, iconProvider, items);
+	}
 
 	@SafeVarargs
-	public SlideMenu(double x, double y, int itemWidth, int itemHeight, Function<T,Image> iconProvider, T... items)
+	public SlideMenu(double x, double y, int itemWidth, int itemHeight, Function<T, Image> iconProvider, T... items)
 	{
 		super(x, y, itemWidth * DEFAULT_MAX_RENDER_AMOUNT, itemHeight);
 		this.items = new HashMap<>();
+
 		this.arrowLeft = ARROW_LEFT;
 		this.arrowRight = ARROW_RIGHT;
 
@@ -75,18 +76,13 @@ public class SlideMenu<T> extends GuiComponent
 		this.itemHeight = itemHeight;
 
 		for (T item : items) this.addItem(item, iconProvider.apply(item));
-		if (items.length != 0) this.selected = items[0];
-
-		this.buttonLeft.setImage(this.arrowLeft);
-		this.buttonRight.setImage(this.arrowRight);
-		this.buttonLeft.setDimension(this.arrowLeft.getWidth(), this.arrowRight.getHeight());
-		this.buttonRight.setDimension(this.arrowRight.getWidth(), this.arrowRight.getHeight());
+		if (items.length != 0) this.focused = items[0];
 	}
 
 	@Override
 	public void initializeComponents()
 	{
-		this.buttonLeft = new ImageComponent(0, 0, 0, 0);
+		this.buttonLeft = new ImageComponent(0, 0, ARROW_LEFT);
 		this.buttonLeft.onMouseLeave(e -> this.mousePressingButtonLeft = false);
 		this.buttonLeft.onMouseReleased(e -> this.mousePressingButtonLeft = false);
 		this.buttonLeft.onMousePressed(e ->
@@ -95,7 +91,7 @@ public class SlideMenu<T> extends GuiComponent
 			this.mousePressingButtonLeft = true;
 		});
 
-		this.buttonRight = new ImageComponent(0, 0, 0, 0);
+		this.buttonRight = new ImageComponent(0, 0, ARROW_RIGHT);
 		this.buttonRight.onMouseLeave(e -> this.mousePressingButtonRight = false);
 		this.buttonRight.onMouseReleased(e -> this.mousePressingButtonRight = false);
 		this.buttonRight.onMousePressed(e ->
@@ -104,23 +100,33 @@ public class SlideMenu<T> extends GuiComponent
 			this.mousePressingButtonRight = true;
 		});
 
-		for (ImageComponent button : new ImageComponent[] { this.buttonLeft, this.buttonRight })
+		this.focusing = new ImageComponent(0, 0, FOCUS);
+		this.focusing.setImageScaleMode(ImageScaleMode.STRETCH);
+
+		for (ImageComponent image : new ImageComponent[] { this.buttonLeft, this.buttonRight, this.focusing })
 		{
-			button.setVisible(true);
-			button.setImageAlign(Align.CENTER);
-			button.setImageValign(Valign.MIDDLE);
-			this.getComponents().add(button);
+			image.setVisible(true);
+			image.setImageAlign(Align.CENTER);
+			image.setImageValign(Valign.MIDDLE);
+			this.getComponents().add(image);
 		}
 	}
 
 	public void slide(int amount)
 	{
-		if (this.items.isEmpty()) return;
+		if (this.items.isEmpty())
+			return;
 
 		this.focus += amount;
-		while (this.focus < 0) this.focus += this.items.size();
-		this.focus %= this.items.size();
+
+		while (this.focus < 0)
+			this.focus += this.items.size();
+
+		while (this.focus > this.items.size())
+			this.focus -= this.items.size();
+
 		this.lastSlide = Game.time().now();
+		this.renderChanged = true;
 	}
 
 	@Override
@@ -134,10 +140,11 @@ public class SlideMenu<T> extends GuiComponent
 			final ArrayList<T> items = new ArrayList<>(this.items.keySet()), rendered = new ArrayList<>();
 			int bWidth = this.getButtonWidth();
 
+			this.focusing.setVisible(false);
 			this.render(bWidth, items, rendered, i -> i >= this.focus && i < this.focus + this.maxRenderAmount);
+
 			if (this.focus + this.maxRenderAmount > this.items.size())
-				this.render(bWidth, items, rendered, i ->
-				i < (this.focus + this.maxRenderAmount) % items.size() + this.maxRenderAmount - this.maxRenderAmount % items.size());
+				this.render(bWidth, items, rendered, i -> i < (this.focus + this.maxRenderAmount) % items.size() + this.maxRenderAmount - this.maxRenderAmount % items.size());
 
 			this.buttonLeft.setWidth(bWidth);
 			this.buttonLeft.setHeight(bWidth);
@@ -153,25 +160,33 @@ public class SlideMenu<T> extends GuiComponent
 			this.onRenderChanged.forEach(c -> c.accept(this));
 		}
 
-		if (this.mousePressingButtonLeft && SLIDE_DELAY < Game.time().since(this.lastSlide)) this.slide(-1);
-		else if (this.mousePressingButtonRight && SLIDE_DELAY < Game.time().since(this.lastSlide)) this.slide(1);
+		long time = Game.time().since(this.lastSlide);
+		if (this.mousePressingButtonLeft && SLIDE_DELAY < time) this.slide(-1);
+		else if (this.mousePressingButtonRight && SLIDE_DELAY < time) this.slide(1);
 
 		super.render(g);
 	}
 
-	private void render(int buttonWidth, ArrayList<T> items, ArrayList<T> rendered, Predicate<Integer> condition)
+	private void render(int buttonWidth, ArrayList<T> items, ArrayList<T> rendered, Predicate<Integer> renderCondition)
 	{
 		for (int i = 0; i < items.size(); i++)
 		{
 			if (rendered.contains(items.get(i))) continue;
 			ImageComponent icon = this.items.get(items.get(i));
 
-			if (condition.test(i))
+			if (renderCondition.test(i))
 			{
 				rendered.add(items.get(i));
 				icon.setLocation(buttonWidth + this.getX() + this.itemWidth * (rendered.size() -1), this.getY());
 				icon.setDimension(this.itemWidth, this.itemHeight);
 				icon.setVisible(true);
+
+				if (icon.isSelected())
+				{
+					this.focusing.setLocation(icon.getLocation());
+					this.focusing.setDimension(icon.getWidth(), icon.getHeight());
+					this.focusing.setVisible(true);
+				}
 			} else
 				icon.setVisible(false);
 		}
@@ -204,17 +219,18 @@ public class SlideMenu<T> extends GuiComponent
 		img.setVisible(false);
 		img.getAppearance().setTransparentBackground(true);
 
-		img.onMouseReleased(e -> this.items.forEach((act, comp) ->
+		img.onMouseReleased(e -> this.items.forEach((element, component) ->
 		{
-			if (comp == img)
+			if (component == img)
 			{
 				img.setSelected(true);
 				img.setEnabled(false);
-				this.selected = act;
+				this.focused = element;
+				this.renderChanged = true;
 			} else
 			{
-				comp.setSelected(false);
-				comp.setEnabled(true);
+				component.setSelected(false);
+				component.setEnabled(true);
 			}
 		}));
 
@@ -274,7 +290,7 @@ public class SlideMenu<T> extends GuiComponent
 	public boolean hasRenderChanged() { return this.renderChanged; }
 
 	public int getFocus() { return this.focus; }
-	public T getSelectedItem() { return this.selected; }
+	public T getFocusedItem() { return this.focused; }
 	public Set<T> getItems() { return this.items.keySet(); }
 
 	public Dimension getItemDimension() { return new Dimension(this.itemWidth, this.itemHeight); }
