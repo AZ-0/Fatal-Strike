@@ -61,9 +61,9 @@ public enum FatalStrike
 		FatalStrike.WINDOW.setExtendedState(Frame.MAXIMIZED_BOTH);
 
 		Resources.load(GAME_FILE);
-		SlideMenu.ARROW_LEFT = UIManager.Images.ARROW_LEFT.getImage();
-		SlideMenu.ARROW_RIGHT = UIManager.Images.ARROW_RIGHT.getImage();
-		SlideMenu.FOCUS = UIManager.Images.FOCUS.getImage();
+		SlideMenu.ARROW_LEFT = UIManager.Images.ARROW_LEFT.get();
+		SlideMenu.ARROW_RIGHT = UIManager.Images.ARROW_RIGHT.get();
+		SlideMenu.FOCUS = UIManager.Images.FOCUS.get();
 
 		Game.screens().add(MenuScreen.screen());
 		Game.screens().add(SelectionScreen.screen());

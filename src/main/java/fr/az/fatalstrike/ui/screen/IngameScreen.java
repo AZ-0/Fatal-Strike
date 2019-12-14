@@ -20,7 +20,6 @@ import de.gurkenlabs.litiengine.Valign;
 import de.gurkenlabs.litiengine.environment.tilemap.IMap;
 import de.gurkenlabs.litiengine.gui.GuiComponent;
 import de.gurkenlabs.litiengine.gui.ImageComponent;
-import de.gurkenlabs.litiengine.gui.screens.GameScreen;
 import de.gurkenlabs.litiengine.gui.screens.Screen;
 import de.gurkenlabs.litiengine.resources.Resources;
 
@@ -49,8 +48,12 @@ public final class IngameScreen extends GameScreen
 
 	private int player = 0;
 
-	private IngameScreen() { super(NAME); }
+	private IngameScreen()
+	{
+		super(NAME);
+	}
 
+	@Override
 	public void display() { this.display(this.player); }
 	public void display(int playerIndex)
 	{
@@ -58,7 +61,7 @@ public final class IngameScreen extends GameScreen
 		this.onPlayerChanged.forEach(c -> c.accept(this, FatalStrike.gameManager().getPlayers().get(this.player), p));
 
 		String text = " Player " + (playerIndex + 1);
-		FontMetrics metrics = UIManager.GRAPHICS.getFontMetrics(UIManager.FONT_GUI);
+		FontMetrics metrics = UIManager.GRAPHICS.getFontMetrics(UIManager.Fonts.GUI.get());
 		int width = metrics.stringWidth(text);
 		int height = metrics.getHeight();
 
@@ -79,7 +82,7 @@ public final class IngameScreen extends GameScreen
 
 		this.nextPlayerButton = new ImageComponent(0, 0, 0, 0, "YOU SHALL NOT SEE THIS");
 		this.nextPlayerScreen.getComponents().add(this.nextPlayerButton);
-		this.nextPlayerButton.setFont(UIManager.FONT_GUI);
+		this.nextPlayerButton.setFont(UIManager.Fonts.GUI.get());
 		this.nextPlayerButton.setEnabled(true);
 		this.nextPlayerButton.setVisible(true);
 		this.nextPlayerButton.onClicked(e ->

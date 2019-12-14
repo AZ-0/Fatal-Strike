@@ -104,7 +104,7 @@ public class KeyboardMenu extends Menu
 
 		this.getCellComponents().forEach(c ->
 		{
-			c.setFont(UIManager.FONT_GUI);
+			c.setFont(UIManager.Fonts.GUI.get());
 			c.getAppearance().setForeColor(this.theme.fore);
 			c.getAppearance().setBackgroundColor1(this.theme.bg);
 			c.getAppearance().setTransparentBackground(false);
@@ -122,14 +122,13 @@ public class KeyboardMenu extends Menu
 		}
 	}
 
-	public boolean isLocked() {
-		return this.isSuspended() || !this.isVisible() || !this.isEnabled() || Game.time().since(this.lastInput) < DELAY; }
+	public boolean isLocked() { return this.isSuspended() || !this.isVisible() || !this.isEnabled() || Game.time().since(this.lastInput) < DELAY; }
 
 	public Theme getTheme() { return this.theme; }
 
 	public static enum Theme
 	{
-		PITCH_BLACK(Color.WHITE, Color.BLACK, Color.YELLOW, Color.BLACK),
+		PITCH_BLACK(Color.WHITE, UIManager.Colors.BACKGROUND.get(), Color.YELLOW, UIManager.Colors.BACKGROUND.get()),
 		;
 
 		private final Color fore;

@@ -1,16 +1,13 @@
 package fr.az.fatalstrike.ui.screen;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
 import de.gurkenlabs.litiengine.Game;
-import de.gurkenlabs.litiengine.gui.screens.GameScreen;
 import de.gurkenlabs.litiengine.gui.screens.Screen;
 import de.gurkenlabs.litiengine.input.Input;
 
 import fr.az.fatalstrike.GameManager.Map;
-import fr.az.fatalstrike.UIManager;
 import fr.az.fatalstrike.ui.component.KeyboardMenu;
 import fr.az.fatalstrike.ui.component.KeyboardMenu.Theme;
 
@@ -35,7 +32,7 @@ public class MenuScreen extends Screen
 	private void startGame()
 	{
 		this.menu.setEnabled(false);
-		Game.screens().display(this.forward);
+		this.forward.display();
 	}
 
 	@Override
@@ -67,7 +64,6 @@ public class MenuScreen extends Screen
 		this.menu.setFocus(0);
 		super.prepare();
 
-		Game.window().getRenderComponent().setBackground(Color.BLACK);
 		Map.TITLE.load();
 		Game.world().camera().setFocus(Game.world().environment().getCenter());
 	}
@@ -75,10 +71,10 @@ public class MenuScreen extends Screen
 	@Override
 	public void render(final Graphics2D g)
 	{
-		Game.world().environment().render(g);
+//		Game.world().environment().render(g);
 
-		g.setFont(UIManager.FONT_GUI);
-		g.setColor(Color.WHITE);
+//		g.setFont(UIManager.Fonts.GUI.getFont());
+//		g.setColor(Color.WHITE);
 
 		super.render(g);
 	}
