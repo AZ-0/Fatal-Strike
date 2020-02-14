@@ -1,7 +1,6 @@
 package fr.az.fatalstrike.ui.component;
 
 import java.awt.Color;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
@@ -108,11 +107,11 @@ public class KeyboardMenu extends Menu
 			c.getAppearance().setForeColor(this.theme.fore);
 			c.getAppearance().setBackgroundColor1(this.theme.bg);
 			c.getAppearance().setTransparentBackground(false);
-			c.getAppearance().setTextAntialiasing(RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			c.getAppearance().setTextAntialiasing(true);
 
 			c.getAppearanceHovered().setForeColor(this.theme.hoveredFore);
 			c.getAppearanceHovered().setBackgroundColor1(this.theme.hoveredBg);
-			c.getAppearanceHovered().setTextAntialiasing(RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			c.getAppearanceHovered().setTextAntialiasing(true);
 		});
 
 		if (!this.getCellComponents().isEmpty())
