@@ -21,12 +21,20 @@ natives {
 repositories {
 	jcenter()
 	mavenCentral()
-	flatDir { dirs 'resources' }
+	maven
+	{
+		name = 'GitHubPackages'
+		url = uri('https://maven.pkg.github.com/az-0/Utilities')
+		credentials {
+			username = System.getenv("GIT_USERNAME")
+			password = System.getenv("GIT_TOKEN")
+		}
+	}
 }
 
 dependencies
 {
-	compile (name: 'Utilities', ext: 'jar')
+	compile 'fr.az.util:Utilities:1.0'
 	compile 'org.json:json:20180813'
 	compile 'de.gurkenlabs:litiengine:0.4.18+'
 }
